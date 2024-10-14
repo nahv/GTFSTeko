@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h1>{{ data_type }}</h1>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            {% for column in data[0].__table__.columns %}
+            <th>{{ column.name }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in data %}
+        <tr>
+            {% for column in item.__table__.columns %}
+            <td>{{ getattr(item, column.name) }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
