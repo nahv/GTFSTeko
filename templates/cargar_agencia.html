@@ -51,13 +51,19 @@
                     <td>{{ agency.agency_url }}</td>
                     <td>{{ agency.agency_timezone }}</td>
                     <td>
+                        <form method="POST" action="{{ url_for('agency.editar_agencia') }}">
+                            <input type="hidden" name="agency_id" value="{{ agency.agency_id }}">
+                            <button type="submit" class="btn btn-warning btn-sm">Editar</button>
+                        </form>
                         <form method="POST" action="{{ url_for('agency.delete_agency', agency_id=agency.agency_id) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta agencia?');">
                             <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                         </form>
+                    </td>                                                        
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+    
 </div>
 {% endblock %}

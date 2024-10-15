@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 w-50">
+    <h2 class="text-center">Editar Ruta</h2>
+
+    <!-- Mensaje exitoso -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        <div class="alert alert-success" role="alert">
+          {% for category, message in messages %}
+            {{ message }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('route.guardar_route', route_id=route.route_id) }}" class="mt-4">
+        <input type="hidden" name="route_id" value="{{ route.route_id }}">
+        <div class="form-group">
+            <label for="agency_id">Agencia</label>
+            <select class="form-control" id="agency_id" name="agency_id" required>
+                {% for agency in agencies %}
+                    <option value="{{ agency.agency_id }}" {% if agency.agency_id == route.agency_id %}selected{% endif %}>{{ agency.agency_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="route_short_name">Nombre corto</label>
+            <input type="text" class="form-control" id="route_short_name" name="route_short_name" value="{{ route.route_short_name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="route_long_name">Nombre largo</label>
+            <input type="text" class="form-control" id="route_long_name" name="route_long_name" value="{{ route.route_long_name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="route_type">Tipo de ruta (transporte)</label>
+            <select class="form-control" id="route_type" name="route_type" required>
+                <option value="3" {% if route.route_type == 3 %}selected{% endif %}>Colectivo</option> <!-- 3: Bus -->
+                <option value="0" {% if route.route_type == 0 %}selected{% endif %}>Tranvía</option> <!-- 0: Tram -->
+                <option value="1" {% if route.route_type == 1 %}selected{% endif %}>Metro</option> <!-- 1: Subway -->
+                <option value="2" {% if route.route_type == 2 %}selected{% endif %}>Tren</option> <!-- 2: Rail -->
+                <option value="4" {% if route.route_type == 4 %}selected{% endif %}>Ferry</option> <!-- 4: Ferry -->
+                <option value="5" {% if route.route_type == 5 %}selected{% endif %}>Teleférico</option> <!-- 5: Cable Car -->
+                <option value="6" {% if route.route_type == 6 %}selected{% endif %}>Góndola</option> <!-- 6: Gondola -->
+                <option value="7" {% if route.route_type == 7 %}selected{% endif %}>Funicular</option> <!-- 7: Funicular -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="route_color">Color (Opcional)</label>
+            <input type="text" class="form-control" id="route_color" name="route_color" value="{{ route.route_color }}" placeholder="#FF5733" maxlength="7">
+            <small class="form-text text-muted">Usar formato hexadecimal (ej: #FF5733)</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Ruta</button>
+    </form>    
+</div>
+{% endblock %}

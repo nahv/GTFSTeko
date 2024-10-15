@@ -11,7 +11,7 @@ def cargar_routes():
         route_short_name = request.form['route_short_name']
         route_long_name = request.form['route_long_name']
         route_type = request.form['route_type']
-        route_color = request.form.get('route_color')  # Optional
+        route_color = request.form.get('route_color')
 
         new_route = Route(
             agency_id=agency_id,
@@ -25,8 +25,8 @@ def cargar_routes():
         flash('Ruta cargada con éxito.', 'success')
         return redirect(url_for('route.cargar_routes'))
 
-    agencies = Agency.query.all()  # Fetch all agencies for dropdown
-    routes = Route.query.all()  # Fetch all routes to display in the table
+    agencies = Agency.query.all()  # Fetch agencies for dropdown
+    routes = Route.query.all()  # Fetch routes for table
     return render_template('cargar_routes.html', agencies=agencies, routes=routes)
 
 @route_bp.route('/delete_route/<int:route_id>', methods=['POST'])
@@ -40,6 +40,28 @@ def delete_route(route_id):
         flash('Ruta no encontrada.', 'danger')
     return redirect(url_for('route.cargar_routes'))  # Adjust the route as necessary
 
-@route_bp.route('/editar_routes')
-def editar_routes():
-    return render_template('editar_routes.html')
+@route_bp.route('/editar_route', methods=['POST'])
+def editar_route():
+    # Get the route ID from the form
+    route_id = request.form['route_id']
+    # Fetch the route por ID
+    route = Route.query.get_or_404(route_id)
+    # Fetch agencies for dropdown
+    agencies = Agency.query.all()
+    # Render the edit form
+    return render_template('editar_route.html', route=route, agencies=agencies)
+
+@route_bp.route('/guardar_route/<int:route_id>', methods=['POST'])
+def guardar_route(route_id):
+    route = Route.query.get_or_404(route_id)  # Fetch the route by ID
+
+    # Update route details with form data
+    route.agency_id = request.form['agency_id']
+    route.route_short_name = request.form['route_short_name']
+    route.route_long_name = request.form['route_long_name']
+    route.route_type = request.form['route_type']
+    route.route_color = request.form.get('route_color')  # Optional
+
+    db.session.commit()
+    flash('Ruta actualizada con éxito.', 'success')
+    return redirect(url_for('route.cargar_routes'))  # Redirect after successful update

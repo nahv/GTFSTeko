@@ -35,19 +35,25 @@ def delete_agency(agency_id):
         flash('Agencia no encontrada.', 'danger')
     return redirect(url_for('agency.cargar_agencia'))
 
-@agency_bp.route('/editar_agencia/', methods=['GET', 'POST'])
-def editar_agencia(agency_id):
+@agency_bp.route('/editar_agencia', methods=['POST'])
+def editar_agencia():
+    # Get the agency ID from the form
+    agency_id = request.form['agency_id']
+    # Fetch the agency by its ID
+    agency = Agency.query.get_or_404(agency_id)
+    # Render the edit form with current agency data
+    return render_template('editar_agencia.html', agency=agency)
+
+@agency_bp.route('/guardar_agencia/<int:agency_id>', methods=['POST'])
+def guardar_agencia(agency_id):
     # Fetch the agency by ID
     agency = Agency.query.get_or_404(agency_id)
-    
-    if request.method == 'POST':
-        # Update agency details with form data
-        agency.agency_name = request.form['agency_name']
-        agency.agency_url = request.form.get('agency_url')
-        agency.agency_timezone = request.form['agency_timezone']
-        
-        db.session.commit()
-        flash('Agencia actualizada con éxito.', 'success')
-        return redirect(url_for('agency.cargar_agencia'))  # Redirect after successful update
 
-    return render_template('editar_agencia.html', agency=agency)
+    # Update agency details with form data
+    agency.agency_name = request.form['agency_name']
+    agency.agency_url = request.form.get('agency_url')
+    agency.agency_timezone = request.form['agency_timezone']
+
+    db.session.commit()
+    flash('Agencia actualizada con éxito.', 'success')
+    return redirect(url_for('agency.cargar_agencia'))  # Redirect after successful update

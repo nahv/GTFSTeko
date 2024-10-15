@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container mt-5 w-50">
-    <h2 class="text-center">Cargar Rutas</h2>
+    <h2 class="text-center">Cargar nueva ruta</h2>
 
     <!-- Mensaje exitoso -->
     {% with messages = get_flashed_messages(with_categories=True) %}
@@ -76,6 +76,10 @@
                     <td>{{ route.route_type }}</td>
                     <td>{{ route.route_color }}</td>
                     <td>
+                        <form method="POST" action="{{ url_for('route.editar_route') }}">
+                            <input type="hidden" name="route_id" value="{{ route.route_id }}">
+                            <button type="submit" class="btn btn-warning btn-sm">Editar</button>
+                        </form>
                         <form method="POST" action="{{ url_for('route.delete_route', route_id=route.route_id) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta ruta?');">
                             <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                         </form>
