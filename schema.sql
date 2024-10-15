@@ -2,7 +2,8 @@ CREATE TABLE agency (
     agency_id INTEGER PRIMARY KEY AUTOINCREMENT,
     agency_name TEXT NOT NULL,
     agency_url TEXT,
-    agency_timezone TEXT NOT NULL
+    agency_timezone TEXT NOT NULL,
+    agency_phone TEXT
 );
 	
 CREATE TABLE routes (

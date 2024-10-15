@@ -1,9 +1,8 @@
 from flask import Blueprint, render_template
-from models import Stop
+from models.models import Stop
 
 stop_bp = Blueprint('stop', __name__, url_prefix='/stop')
 
-@stop_bp.route('/')
-def list_stops():
-    stops = Stop.query.all()
-    return render_template('view_data.html', data=stops, data_type="Stops")
+@stop_bp.route('/editar_stops')
+def editar_stops():
+    return render_template('editar_stops.html')

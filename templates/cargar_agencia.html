@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 w-50">
+    <h2 class="text-center">Cargar Agencia</h2>
+
+    <!-- Mensaje exitoso -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        <div class="alert alert-success" role="alert">
+          {% for category, message in messages %}
+            {{ message }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="mt-4">
+        <div class="form-group">
+            <label for="agency_name">Nombre</label>
+            <input type="text" class="form-control" id="agency_name" name="agency_name" required>
+        </div>
+        <div class="form-group">
+            <label for="agency_url">Sitio web (URL)</label>
+            <input type="text" class="form-control" id="agency_url" name="agency_url">
+        </div>
+        <div class="form-group">
+            <label for="agency_timezone">Zona Horaria</label>
+            <input type="text" class="form-control" id="agency_timezone" name="agency_timezone" value="UTC-3" readonly>
+            <small class="form-text text-muted">(Argentina)</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Cargar Agencia</button>
+    </form>
+
+    <!-- Agencies Table -->
+    <h3 class="mt-5">Agencias Registradas</h3>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>URL</th>
+                <th>Zona Horaria</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for agency in agencies %}
+                <tr>
+                    <td>{{ agency.agency_id }}</td>
+                    <td>{{ agency.agency_name }}</td>
+                    <td>{{ agency.agency_url }}</td>
+                    <td>{{ agency.agency_timezone }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('agency.delete_agency', agency_id=agency.agency_id) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta agencia?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

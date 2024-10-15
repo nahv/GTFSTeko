@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">GTFSTekó</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mr-auto">
+          <!-- Cargar Dropdown -->
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="{{ url_for('index') }}" id="navbarDropdownCargar" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Cargar
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownCargar">
+                  <a class="dropdown-item" href="{{ url_for('agency.cargar_agencia') }}">Cargar Agencia</a>
+                  <a class="dropdown-item" href="{{ url_for('route.cargar_routes') }}">Cargar Rutas</a> 
+                  <a class="dropdown-item" href="{{ url_for('stoptimes.cargar_stoptimes') }}">Cargar Paradas</a> <!-- Updated to 'stoptimes' -->
+                  <a class="dropdown-item" href="{{ url_for('calendar.cargar_calendar') }}">Cargar Calendario</a>
+                  <a class="dropdown-item" href="{{ url_for('trips.cargar_trips') }}">Cargar Viajes</a>
+                  <a class="dropdown-item" href="{{ url_for('stoptimes.cargar_stoptimes') }}">Cargar Horarios de Paradas</a>
+                  <a class="dropdown-item" href="{{ url_for('shapes.cargar_shapes') }}">Cargar Recorridos</a>
+              </div>
+          </li>
+          <!-- Editar Dropdown -->
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownEditar" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Editar
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownEditar">
+                  <a class="dropdown-item" href="{{ url_for('agency.editar_agencia') }}">Editar Agencia</a>
+                  <a class="dropdown-item" href="{{ url_for('route.editar_routes') }}">Editar Rutas</a> 
+                  <a class="dropdown-item" href="{{ url_for('stoptimes.editar_stoptimes') }}">Editar Paradas</a> <!-- Updated to 'stoptimes' -->
+                  <a class="dropdown-item" href="{{ url_for('calendar.editar_calendar_calendar') }}">Editar Calendario</a>
+                  <a class="dropdown-item" href="{{ url_for('trips.editar_trips') }}">Editar Viajes</a>
+                  <a class="dropdown-item" href="{{ url_for('stoptimes.editar_stoptimes') }}">Editar Horarios de Paradas</a>
+                  <a class="dropdown-item" href="{{ url_for('shapes.editar_shapes') }}">Editar Recorridos</a>
+              </div>
+          </li>
+      </ul>
+  </div>
+</nav>

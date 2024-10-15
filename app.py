@@ -1,69 +1,36 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template
+from routes.agency_routes import agency_bp
+from routes.calendar_routes import calendar_bp
+from routes.route_routes import route_bp
+from routes.shapes_routes import shapes_bp
+from routes.stop_routes import stop_bp
+from routes.stoptime_routes import stoptimes_bp
+from routes.trip_routes import trips_bp
+from database import init_db
+import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///transporte.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+app.secret_key = os.urandom(24) 
 
-class Agency(db.Model):
-    agency_id = db.Column(db.Integer, primary_key=True)
-    agency_name = db.Column(db.String(80), nullable=False)
-    agency_url = db.Column(db.String(200))
-    agency_timezone = db.Column(db.String(80), nullable=False)
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "instance", "transporte.db")}'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Optional: to suppress warnings
 
-class Route(db.Model):
-    route_id = db.Column(db.Integer, primary_key=True)
-    agency_id = db.Column(db.Integer, db.ForeignKey('agency.agency_id'), nullable=False)
-    route_short_name = db.Column(db.String(10), nullable=False)
-    route_long_name = db.Column(db.String(100), nullable=False)
-    route_type = db.Column(db.Integer, nullable=False)
-    route_color = db.Column(db.String(6))
+init_db(app)
 
-class Stop(db.Model):
-    stop_id = db.Column(db.Integer, primary_key=True)
-    stop_name = db.Column(db.String(100), nullable=False)
-    stop_lat = db.Column(db.Float, nullable=False)
-    stop_lon = db.Column(db.Float, nullable=False)
-    stop_location = db.Column(db.String(100))
+app.register_blueprint(agency_bp)
+app.register_blueprint(calendar_bp)
+app.register_blueprint(route_bp)
+app.register_blueprint(shapes_bp)
+app.register_blueprint(stop_bp)
+app.register_blueprint(stoptimes_bp)
+app.register_blueprint(trips_bp)
 
-class Calendar(db.Model):
-    service_id = db.Column(db.Integer, primary_key=True)
-    monday = db.Column(db.Integer)
-    tuesday = db.Column(db.Integer)
-    wednesday = db.Column(db.Integer)
-    thursday = db.Column(db.Integer)
-    friday = db.Column(db.Integer)
-    saturday = db.Column(db.Integer)
-    sunday = db.Column(db.Integer)
-    start_date = db.Column(db.String(8))
-    end_date = db.Column(db.String(8))
-
-class Trip(db.Model):
-    trip_id = db.Column(db.Integer, primary_key=True)
-    route_id = db.Column(db.Integer, db.ForeignKey('route.route_id'), nullable=False)
-    service_id = db.Column(db.Integer, db.ForeignKey('calendar.service_id'), nullable=False)
-    trip_headsign = db.Column(db.String(100))
-
-class StopTime(db.Model):
-    trip_id = db.Column(db.Integer, db.ForeignKey('trip.trip_id'), primary_key=True)
-    stop_id = db.Column(db.Integer, db.ForeignKey('stop.stop_id'), primary_key=True)
-    arrival_time = db.Column(db.String(8), nullable=False)
-    departure_time = db.Column(db.String(8), nullable=False)
-    stop_sequence = db.Column(db.Integer, nullable=False)
-
-class Shape(db.Model):
-    shape_id = db.Column(db.Integer, primary_key=True)
-    shape_pt_lat = db.Column(db.Float, nullable=False)
-    shape_pt_lon = db.Column(db.Float, nullable=False)
-    shape_pt_sequence = db.Column(db.Integer, nullable=False)
-
-# Crear las tablas
+# index.html
 @app.route('/')
 def index():
-    db.create_all()
-    return "Base de datos inicializada con el esquema GTFS."
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
