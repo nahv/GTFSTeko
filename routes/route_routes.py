@@ -22,7 +22,7 @@ def cargar_routes():
         )
         db.session.add(new_route)
         db.session.commit()
-        flash('Ruta cargada con éxito.', 'success')
+        flash('Línea cargada con éxito.', 'success')
         return redirect(url_for('route.cargar_routes'))
 
     agencies = Agency.query.all()  # Fetch agencies for dropdown
@@ -35,9 +35,9 @@ def delete_route(route_id):
     if route:
         db.session.delete(route)
         db.session.commit()
-        flash('Ruta eliminada con éxito.', 'success')
+        flash('Línea eliminada con éxito.', 'success')
     else:
-        flash('Ruta no encontrada.', 'danger')
+        flash('Línea no encontrada.', 'danger')
     return redirect(url_for('route.cargar_routes'))  # Adjust the route as necessary
 
 @route_bp.route('/editar_route', methods=['POST'])
@@ -63,5 +63,5 @@ def guardar_route(route_id):
     route.route_color = request.form.get('route_color')  # Optional
 
     db.session.commit()
-    flash('Ruta actualizada con éxito.', 'success')
+    flash('Línea actualizada con éxito.', 'success')
     return redirect(url_for('route.cargar_routes'))  # Redirect after successful update

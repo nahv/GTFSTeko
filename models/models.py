@@ -19,7 +19,7 @@ class Stop(db.Model):
     stop_name = db.Column(db.String(100), nullable=False)
     stop_lat = db.Column(db.Float, nullable=False)
     stop_lon = db.Column(db.Float, nullable=False)
-    stop_location = db.Column(db.String(100))
+    stop_desc = db.Column(db.String(100))
 
 class Calendar(db.Model):
     service_id = db.Column(db.Integer, primary_key=True)

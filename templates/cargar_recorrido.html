@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 d-flex align-items-center flex-column">
+    <h2 class="text-center">Cargar recorrido</h2>
+
+    <!-- Mensaje exitoso -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        <div class="alert alert-success" role="alert">
+            {% for category, message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Cargar Stop Times Form -->
+    <form method="POST" action="{{ url_for('gtfs.cargar_recorrido') }}" class="mt-4">
+        <!-- Seleccionar Ruta -->
+        <div class="d-flex justify-content-center">
+            <div class="form-group w-50">
+                <label for="route_id">Seleccionar línea</label>
+                <select class="form-control form-control-sm" id="route_id" name="route_id" required>
+                    {% for route in routes %}
+                    <option value="{{ route.route_id }}">{{ route.route_long_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Seleccionar Múltiples Paradas -->
+        <div class="d-flex justify-content-center">
+            <div class="form-group w-75">
+                <label for="stops">Seleccionar paradas</label>
+                <div class="form-check">
+                    {% for stop in stops %}
+                    <input type="checkbox" class="form-check-input" id="stop_{{ stop.stop_id }}" name="stop_ids" value="{{ stop.stop_id }}">
+                    <label class="form-check-label" for="stop_{{ stop.stop_id }}">{{ stop.stop_name }}</label><br>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Horarios de Llegada y Salida -->
+        <div class="d-flex justify-content-center">
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="arrival_time">Hora de llegada</label>
+                    <input type="time" class="form-control" id="arrival_time" name="arrival_time" value="06:00" required>
+                </div>
+                <div class="form-group col">
+                    <label for="departure_time">Hora de salida</label>
+                    <input type="time" class="form-control" id="departure_time" name="departure_time" value="06:00" required>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Cargar recorrido</button>
+    </form>
+
+    <!-- Lista de Stop Times -->
+    <h3 class="mt-5">Lista de paradas cargadas</h3>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>ID de Viaje</th>
+                <th>Parada</th>
+                <th>Hora de Llegada</th>
+                <th>Hora de Salida</th>
+                <th>Secuencia de Parada</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stop_time in stop_times %}
+            <tr>
+                <td>{{ stop_time.trip_id }}</td>
+                <td>
+                    {% for stop in stops %}
+                        {% if stop.stop_id == stop_time.stop_id %}
+                            {{ stop.stop_name }}  <!-- Use stop_name from stops table -->
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{ stop_time.arrival_time }}</td>
+                <td>{{ stop_time.departure_time }}</td>
+                <td>{{ stop_time.stop_sequence }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

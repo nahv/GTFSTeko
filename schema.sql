@@ -21,7 +21,7 @@ CREATE TABLE stops (
     stop_name TEXT NOT NULL,
     stop_lat REAL NOT NULL,  -- Latitud
     stop_lon REAL NOT NULL,  -- Longitud
-    stop_location TEXT  -- Dirección o descripción de la parada
+    stop_desc TEXT  -- Dirección o descripción de la parada
 );
 
 CREATE TABLE calendar (  -- 1 para operativo, 0 para no
@@ -55,13 +55,4 @@ CREATE TABLE stop_times (
     PRIMARY KEY (trip_id, stop_id),
     FOREIGN KEY (trip_id) REFERENCES trips(trip_id),
     FOREIGN KEY (stop_id) REFERENCES stops(stop_id)
-);
-
-
-
-CREATE TABLE shapes (
-    shape_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    shape_pt_lat REAL NOT NULL,  -- Latitud del punto
-    shape_pt_lon REAL NOT NULL,  -- Longitud del punto
-    shape_pt_sequence INTEGER NOT NULL  -- Orden de los puntos
 );

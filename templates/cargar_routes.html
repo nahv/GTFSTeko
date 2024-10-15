@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mt-5 w-50">
-    <h2 class="text-center">Cargar nueva ruta</h2>
+<div class="container mt-5 d-flex justify-content-center w-50 flex-column">
+    <h2 class="text-center">Cargar nueva línea</h2>
 
     <!-- Mensaje exitoso -->
     {% with messages = get_flashed_messages(with_categories=True) %}
@@ -15,7 +15,8 @@
     {% endwith %}
 
     <form method="POST" class="mt-4">
-        <div class="form-group">
+        <div class="d-flex justify-content-center">
+        <div class="form-group w-50">
             <label for="agency_id">Agencia</label>
             <select class="form-control" id="agency_id" name="agency_id" required>
                 {% for agency in agencies %}
@@ -23,37 +24,54 @@
                 {% endfor %}
             </select>
         </div>
+    </div>
+        <div class="container d-flex justify-content-center w-50">
         <div class="form-group">
-            <label for="route_short_name">Nombre corto</label>
+            <label for="route_short_name">Número</label>
             <input type="text" class="form-control" id="route_short_name" name="route_short_name" required>
         </div>
         <div class="form-group">
-            <label for="route_long_name">Nombre largo</label>
+            <label for="route_long_name">Letra</label>
             <input type="text" class="form-control" id="route_long_name" name="route_long_name" required>
         </div>
+    </div>
+    <div class="d-flex justify-content-center flex-column">
         <div class="form-group">
-            <label for="route_type">Tipo de ruta (transporte)</label>
+            <label for="route_type">Tipo de transporte</label>
             <select class="form-control" id="route_type" name="route_type" required>
-                <option value="3">Colectivo</option> <!-- 3: Bus -->
-                <option value="0">Tranvía</option> <!-- 0: Tram -->
-                <option value="1">Metro</option> <!-- 1: Subway -->
-                <option value="2">Tren</option> <!-- 2: Rail -->
-                <option value="4">Ferry</option> <!-- 4: Ferry -->
-                <option value="5">Teleférico</option> <!-- 5: Cable Car -->
-                <option value="6">Góndola</option> <!-- 6: Gondola -->
-                <option value="7">Funicular</option> <!-- 7: Funicular -->
+                <option value="3">Colectivo</option>
+                <option value="0">Tranvía</option>
+                <option value="1">Metro</option>
+                <option value="2">Tren</option>
+                <option value="4">Ferry</option>
+                <option value="5">Teleférico</option>
+                <option value="6">Góndola</option>
+                <option value="7">Funicular</option>
             </select>
+        </div>
+        <!-- Seleccionar Días -->
+        <div class="form-row">
+            {% for day in ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'] %}
+            <div class="form-group col">
+                <label for="{{ day }}">{{ day|capitalize }}</label>
+                <select class="form-control form-control-sm" id="{{ day }}" name="{{ day }}" required>
+                    <option value="1" selected>Operativo</option>
+                    <option value="2">No operativo</option>
+                </select>
+            </div>
+            {% endfor %}
         </div>
         <div class="form-group">
             <label for="route_color">Color (Opcional)</label>
             <input type="text" class="form-control" id="route_color" name="route_color" placeholder="#FF5733" maxlength="7">
             <small class="form-text text-muted">Usar formato hexadecimal (ej: #FF5733)</small>
         </div>
-        <button type="submit" class="btn btn-primary">Cargar Ruta</button>
+    </div>
+        <button type="submit" class="btn btn-primary">Cargar</button>
     </form>
 
     <!-- Routes Table -->
-    <h3 class="mt-5">Rutas Registradas</h3>
+    <h3 class="mt-5">Líneas Registradas</h3>
     <table class="table table-striped mt-3">
         <thead>
             <tr>
@@ -63,7 +81,7 @@
                 <th>Nombre Largo</th>
                 <th>Tipo</th>
                 <th>Color</th>
-                <th>Acciones</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -76,13 +94,71 @@
                     <td>{{ route.route_type }}</td>
                     <td>{{ route.route_color }}</td>
                     <td>
-                        <form method="POST" action="{{ url_for('route.editar_route') }}">
-                            <input type="hidden" name="route_id" value="{{ route.route_id }}">
-                            <button type="submit" class="btn btn-warning btn-sm">Editar</button>
-                        </form>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal{{ route.route_id }}">
+                            Editar
+                        </button>
                         <form method="POST" action="{{ url_for('route.delete_route', route_id=route.route_id) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta ruta?');">
                             <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                         </form>
+
+                        <!-- Edit Modal -->
+                        <div class="modal fade" id="editModal{{ route.route_id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editModalLabel">Editar Ruta</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form method="POST" action="{{ url_for('route.guardar_route', route_id=route.route_id) }}">
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="agency_id">Agencia</label>
+                                                <select class="form-control" id="agency_id" name="agency_id" required>
+                                                    {% for agency in agencies %}
+                                                        <option value="{{ agency.agency_id }}" {% if agency.agency_id == route.agency_id %}selected{% endif %}>
+                                                            {{ agency.agency_name }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="route_short_name">Número</label>
+                                                <input type="text" class="form-control" id="route_short_name" name="route_short_name" value="{{ route.route_short_name }}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="route_long_name">Letra</label>
+                                                <input type="text" class="form-control" id="route_long_name" name="route_long_name" value="{{ route.route_long_name }}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="route_type">Tipo de transporte</label>
+                                                <select class="form-control" id="route_type" name="route_type" required>
+                                                    <option value="3" {% if route.route_type == '3' %}selected{% endif %}>Colectivo</option>
+                                                    <option value="0" {% if route.route_type == '0' %}selected{% endif %}>Tranvía</option>
+                                                    <option value="1" {% if route.route_type == '1' %}selected{% endif %}>Metro</option>
+                                                    <option value="2" {% if route.route_type == '2' %}selected{% endif %}>Tren</option>
+                                                    <option value="4" {% if route.route_type == '4' %}selected{% endif %}>Ferry</option>
+                                                    <option value="5" {% if route.route_type == '5' %}selected{% endif %}>Teleférico</option>
+                                                    <option value="6" {% if route.route_type == '6' %}selected{% endif %}>Góndola</option>
+                                                    <option value="7" {% if route.route_type == '7' %}selected{% endif %}>Funicular</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="route_color">Color (Opcional)</label>
+                                                <input type="text" class="form-control" id="route_color" name="route_color" value="{{ route.route_color }}">
+                                                <small class="form-text text-muted">Usar formato hexadecimal (ej: #FF5733)</small>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             {% endfor %}

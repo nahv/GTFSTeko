@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 d-flex align-items-center flex-column">
+    <h2 class="text-center">Cargar parada</h2>
+
+       <!-- Mensaje exitoso -->
+       {% with messages = get_flashed_messages(with_categories=True) %}
+       {% if messages %}
+         <div class="alert alert-success" role="alert">
+           {% for category, message in messages %}
+             {{ message }}
+           {% endfor %}
+         </div>
+       {% endif %}
+     {% endwith %}
+
+    <form method="POST" action="{{ url_for('stop.cargar_stops') }}" class="mt-4 w-25">
+        <div class="form-group">
+            <label for="stop_name">Nombre</label>
+            <input type="text" class="form-control" id="stop_name" name="stop_name" required>
+        </div>
+        <div class="d-flex">
+        <div class="form-group">
+            <label for="stop_lat">Latitud</label>
+            <input type="number" step="any" class="form-control" id="stop_lat" name="stop_lat" required>
+        </div>
+        <div class="form-group">
+            <label for="stop_lon">Longitud</label>
+            <input type="number" step="any" class="form-control" id="stop_lon" name="stop_lon" required>
+        </div>
+    </div>
+        <div class="form-group">
+            <label for="stop_desc">Descripción</label>
+            <input type="text" class="form-control" id="stop_desc" name="stop_desc">
+        </div>
+        <button type="submit" class="btn btn-primary">Cargar</button>
+    </form>
+
+    <h3 class="mt-5">Lista de Paradas</h3>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Latitud</th>
+                <th>Longitud</th>
+                <th>Descripción</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stop in stops %}
+            <tr>
+                <td>{{ stop.stop_id }}</td>
+                <td>{{ stop.stop_name }}</td>
+                <td>{{ stop.stop_lat }}</td>
+                <td>{{ stop.stop_lon }}</td>
+                <td>{{ stop.stop_desc }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('stop.delete_stop', stop_id=stop.stop_id) }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal{{ stop.stop_id }}">Editar</button>
+                    </form>
+                </td>
+            </tr>
+            <!-- Edit Modal -->
+            <div class="modal fade" id="editModal{{ stop.stop_id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ stop.stop_id }}" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form method="POST" action="{{ url_for('stop.guardar_stop', stop_id=stop.stop_id) }}">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editModalLabel{{ stop.stop_id }}">Editar Parada</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="stop_name">Nombre</label>
+                                    <input type="text" class="form-control" id="stop_name" name="stop_name" value="{{ stop.stop_name }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="stop_lat">Latitud</label>
+                                      <input type="number" step="any" class="form-control" id="stop_lat" name="stop_lat" value="{{ stop.stop_lat }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="stop_lon">Longitud</label>
+                                    <input type="number" step="any" class="form-control" id="stop_lon" name="stop_lon" value="{{ stop.stop_lon }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="stop_desc">Descripción</label>
+                                    <input type="text" class="form-control" id="stop_desc" name="stop_desc" value="{{ stop.stop_desc }}">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
