@@ -20,6 +20,12 @@ def cargar_recorrido():
 
         # Loop through the stop IDs and create StopTime entries
         for i, stop_id in enumerate(stop_ids):
+            # Check if the entry already exists
+            existing_stop_time = StopTime.query.filter_by(trip_id=route_id, stop_id=stop_id).first()
+            if existing_stop_time:
+                flash(f'La combinación de trip_id {route_id} y stop_id {stop_id} ya existe.')
+                continue  # Skip and continue with the next
+
             stop_time = StopTime(
                 trip_id=route_id,  # Assuming trip_id is the same as route_id, adjust as needed
                 stop_id=stop_id,
@@ -30,8 +36,15 @@ def cargar_recorrido():
             db.session.add(stop_time)
 
         db.session.commit()
-        flash('Horas de paradas cargadas con éxito.', 'success')
+        flash('Recorrido con éxito.', 'success')
         return redirect(url_for('gtfs.cargar_recorrido'))
+
+    # Fetch existing routes, stops, and stop times for display
+    routes = Route.query.all()
+    stops = Stop.query.all()
+    stop_times = StopTime.query.all()
+
+    return render_template('cargar_recorrido.html', routes=routes, stops=stops, stop_times=stop_times)
 
     # Fetch existing routes, stops, and stop times for display
     routes = Route.query.all()
