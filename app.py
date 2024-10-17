@@ -3,6 +3,7 @@ from routes.agency_routes import agency_bp
 from routes.route_routes import route_bp
 from routes.stop_routes import stop_bp
 from routes.recorrido_routes import gtfs_bp
+from routes.importar_csv_routes import csv_bp
 from database import init_db
 import os
 
@@ -20,7 +21,7 @@ app.register_blueprint(agency_bp)
 app.register_blueprint(route_bp)
 app.register_blueprint(stop_bp)
 app.register_blueprint(gtfs_bp)
-
+app.register_blueprint(csv_bp)
 # index.html
 @app.route('/')
 def index():

@@ -53,8 +53,8 @@ def load_recorridos_to_routes_trips(recorridos_df, cursor):
             else:
                 direction_id = None 
 
-            # Insert into 'routes' table
-            agency_id = 1  # Agencia 1
+            # Insertar en 'routes' table
+            agency_id = 1  # Agencia 1 por defecto
             route_type = 3  # Buses
 
             query_route = '''
@@ -62,20 +62,20 @@ def load_recorridos_to_routes_trips(recorridos_df, cursor):
             VALUES (?, ?, ?, ?)
             '''
             cursor.execute(query_route, (agency_id, route_short_name, route_long_name, route_type))
-            route_id = cursor.lastrowid  # Get the last inserted route ID
+            route_id = cursor.lastrowid
 
-            # Insert trip data with trip_headsign from 'nombre' and direction_id
-            service_id = 1  # Assuming default service for now
-            trip_headsign = nombre  # Use 'nombre' for the trip headsign
+            # trip_headsign from 'nombre' and direction_id
+            service_id = 1  
+            trip_headsign = nombre  # Usar columna 'nombre' para el trip headsign
 
             query_trip = '''
             INSERT INTO trip (route_id, service_id, trip_headsign, direction_id)
             VALUES (?, ?, ?, ?)
             '''
             cursor.execute(query_trip, (route_id, service_id, trip_headsign, direction_id))
-            trip_id = cursor.lastrowid  # Get the trip_id of the last inserted trip
+            trip_id = cursor.lastrowid 
 
-            # Parse GeoJSON data and round coordinates
+            # Parse GeoJSON data y redondear coordenadas
             geojson_str = row['st_asgeojson']
 
             if not geojson_str:
@@ -87,9 +87,9 @@ def load_recorridos_to_routes_trips(recorridos_df, cursor):
                 rounded_coords = round_coords(geojson_data['coordinates'])
             except (json.JSONDecodeError, KeyError) as e:
                 print(f"Error en el GeoJSON para ramal {ramal}: {e}...")
-                continue  # Skip invalid GeoJSON data
+                continue  # Skip GeoJSON data inválido
 
-            # Insert stop_time data with arrival_time and departure_time fixed to '06:00:00'
+            # arrival_time and departure_time por defecto a '06:00:00'
             for stop_sequence, coord in enumerate(rounded_coords, start=1):
                 stop_lat, stop_lon = coord  # Extract lat/lon from GeoJSON coordinates
                 query_stop_time = '''

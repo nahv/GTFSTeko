@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 d-flex align-items-center flex-column">
+    <h2>Importar datos desde CSV</h2>
+
+    <!-- Mensaje exitoso -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        <div class="alert alert-{{ category }}" role="alert">
+            {% for category, message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group"> 
+          <div class="d-flex justify-content-center"> 
+            <label for="paradas" class="mt-2 mr-2">Seleccione o arrastre el archivo de paradas:</label>
+            <input type="file" class="form-control w-50" id="paradas" name="paradas" accept=".csv">
+          </div>
+            <!-- Explanation table for Paradas -->
+            <p class="mt-3">El archivo de <strong>paradas</strong> debe contener las siguientes columnas</p>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Columna</th>
+                        <th>Tipo de Dato</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>linea_ramal</td>
+                        <td>Texto (string)</td>
+                        <td>Lineas o ramales que utilizan la parada</td>
+                    </tr>
+                    <tr>
+                        <td>lng</td>
+                        <td>GeoPoint (geo_point)</td>
+                        <td>Coordenada de longitud donde se localiza la parada</td>
+                    </tr>
+                    <tr>
+                        <td>lat</td>
+                        <td>GeoPoint (geo_point)</td>
+                        <td>Coordenada de latitud donde se localiza la parada</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="form-group mt-4">
+          <div class="d-flex justify-content-center">
+            <label for="recorridos" class="mt-2 mr-2">Seleccione o arrastre el archivo de Recorridos:</label>
+            <input type="file" class="form-control w-50" id="recorridos" name="recorridos" accept=".csv">
+        </div>
+            <!-- Explanation table for Recorridos -->
+            <p class="mt-3">El archivo de <strong>recorridos</strong> debe contener las siguientes columnas</p>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Columna</th>
+                        <th>Tipo de Dato</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ramal</td>
+                        <td>Texto (string)</td>
+                        <td>Número de linea + ramal + Cartel de anuncio de destino<br>Este texto será utilizado para speechvoice en el GTFS</td>
+                    </tr>
+                    <tr>
+                        <td>linea_descripcion</td>
+                        <td>Texto (string)</td>
+                        <td>Numero de linea del colectivo + Ramal + Sentido</td>
+                    </tr>
+                    <tr>
+                        <td>st_asgeojson</td>
+                        <td>GeoJSON (geojson)</td>
+                        <td>Trayecto</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4">Importar</button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary mt-4">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

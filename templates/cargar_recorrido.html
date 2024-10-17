@@ -88,35 +88,34 @@
     </form>
 
     <!-- Lista de Stop Times -->
-    <h3 class="mt-5">Lista de paradas cargadas</h3>
-    <table class="table table-bordered mt-3">
-        <thead>
-            <tr>
-                <th>ID de Viaje</th>
-                <th>Parada</th>
-                <th>Hora de Llegada</th>
-                <th>Hora de Salida</th>
-                <th>Secuencia de Parada</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for stop_time in stop_times.items %}
-            <tr>
-                <td>{{ stop_time.trip_id }}</td>
-                <td>
-                    {% for stop in stops %}
-                        {% if stop.stop_id == stop_time.stop_id %}
-                            {{ stop.stop_name }}
-                        {% endif %}
-                    {% endfor %}
-                </td>
-                <td>{{ stop_time.arrival_time }}</td>
-                <td>{{ stop_time.departure_time }}</td>
-                <td>{{ stop_time.stop_sequence }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <h3 class="mt-5">Lista de paradas conectadas cargadas</h3>
+<table class="table table-bordered mt-3">
+    <thead>
+        <tr>
+            <th>Parada</th>
+            <th>Hora de Llegada</th>
+            <th>Hora de Salida</th>
+            <th>Secuencia de Parada</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for stop_time in stop_times.items %}
+        <tr>
+            <td>
+                {% for stop in stops %}
+                    {% if stop.stop_id == stop_time.stop_id %}
+                        {{ stop.stop_name }}
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>{{ stop_time.arrival_time }}</td>
+            <td>{{ stop_time.departure_time }}</td>
+            <td>{{ stop_time.stop_sequence }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 
    <!-- Pagination for Stop Times -->
 <nav aria-label="Page navigation">
