@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from models.models import Route, Agency
-from database import db 
+from database import db
+from flask_paginate import Pagination, get_page_parameter
 
 route_bp = Blueprint('route', __name__, url_prefix='/route')
 
@@ -25,9 +26,17 @@ def cargar_routes():
         flash('Línea cargada con éxito.', 'success')
         return redirect(url_for('route.cargar_routes'))
 
-    agencies = Agency.query.all()  # Fetch agencies for dropdown
-    routes = Route.query.all()  # Fetch routes for table
-    return render_template('cargar_routes.html', agencies=agencies, routes=routes)
+    agencies = Agency.query.all()
+
+    # Pagination setup
+    page = request.args.get(get_page_parameter(), type=int, default=1)  # Get the current page
+    per_page = 10  # Set the number of items per page
+    routes = Route.query.paginate(page=page, per_page=per_page)  # Paginate routes
+
+    # Prepare the pagination object for template rendering
+    pagination = Pagination(page=page, total=routes.total, search=False, record_name='routes', per_page=per_page)
+
+    return render_template('cargar_routes.html', agencies=agencies, routes=routes.items, pagination=pagination, current_page=page, total_pages=routes.pages)
 
 @route_bp.route('/delete_route/<int:route_id>', methods=['POST'])
 def delete_route(route_id):
@@ -62,6 +71,6 @@ def guardar_route(route_id):
     route.route_type = request.form['route_type']
     route.route_color = request.form.get('route_color')  # Optional
 
-    db.session.commit()
+    db.session.commit()  # Commit the changes to the database
     flash('Línea actualizada con éxito.', 'success')
-    return redirect(url_for('route.cargar_routes'))  # Redirect after successful update
+    return redirect(url_for('route.cargar_routes'))

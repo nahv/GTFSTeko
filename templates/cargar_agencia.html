@@ -51,19 +51,48 @@
                     <td>{{ agency.agency_url }}</td>
                     <td>{{ agency.agency_timezone }}</td>
                     <td>
-                        <form method="POST" action="{{ url_for('agency.editar_agencia') }}">
-                            <input type="hidden" name="agency_id" value="{{ agency.agency_id }}">
-                            <button type="submit" class="btn btn-warning btn-sm">Editar</button>
-                        </form>
-                        <form method="POST" action="{{ url_for('agency.delete_agency', agency_id=agency.agency_id) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta agencia?');">
+                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal{{ agency.agency_id }}">Editar</button>
+                        <form method="POST" action="{{ url_for('agency.delete_agency', agency_id=agency.agency_id) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta agencia?');" style="display:inline;">
                             <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                         </form>
-                    </td>                                                        
                     </td>
                 </tr>
+
+                <!-- Edit Modal -->
+                <div class="modal fade" id="editModal{{ agency.agency_id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ agency.agency_id }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <form method="POST" action="{{ url_for('agency.editar_agencia', agency_id=agency.agency_id) }}">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel{{ agency.agency_id }}">Editar Agencia</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="agency_name">Nombre</label>
+                                        <input type="text" class="form-control" id="agency_name" name="agency_name" value="{{ agency.agency_name }}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="agency_url">Sitio web (URL)</label>
+                                        <input type="text" class="form-control" id="agency_url" name="agency_url" value="{{ agency.agency_url }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="agency_timezone">Zona Horaria</label>
+                                        <input type="text" class="form-control" id="agency_timezone" name="agency_timezone" value="{{ agency.agency_timezone }}" required>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
         </tbody>
     </table>
-    
 </div>
 {% endblock %}
