@@ -1,11 +1,8 @@
 from flask import Flask, render_template
 from routes.agency_routes import agency_bp
-# from routes.calendar_routes import calendar_bp
 from routes.route_routes import route_bp
-from routes.shapes_routes import shapes_bp
 from routes.stop_routes import stop_bp
 from routes.stoptime_routes import stoptimes_bp
-from routes.trip_routes import trips_bp
 from database import init_db
 import os
 
@@ -24,12 +21,9 @@ init_db(app)
 app.register_blueprint(gtfs_bp) #test
 
 app.register_blueprint(agency_bp)
-# app.register_blueprint(calendar_bp)
 app.register_blueprint(route_bp)
-app.register_blueprint(shapes_bp)
 app.register_blueprint(stop_bp)
 app.register_blueprint(stoptimes_bp)
-app.register_blueprint(trips_bp)
 
 # index.html
 @app.route('/')

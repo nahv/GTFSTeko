@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+
 <div class="container mt-5 d-flex align-items-center flex-column">
     <h2 class="text-center">Cargar recorrido</h2>
 
@@ -18,7 +20,7 @@
     <form method="POST" action="{{ url_for('gtfs.cargar_recorrido') }}" class="mt-4">
         <!-- Seleccionar Ruta -->
         <div class="d-flex justify-content-center">
-            <div class="form-group w-50">
+            <div class="form-group">
                 <label for="route_id">Seleccionar línea</label>
                 <select class="form-control form-control-sm" id="route_id" name="route_id" required>
                     {% for route in routes %}
@@ -28,34 +30,31 @@
             </div>
         </div>
 
+        <!-- Input for trip headsign -->
+        <div class="d-flex justify-content-center">
+            <div class="form-group">
+                <label for="trip_headsign">Dirección del viaje (opcional)</label>
+                <input type="text" class="form-control" id="trip_headsign" name="trip_headsign" placeholder="Ej: Centro al Puerto">
+            </div>
+        </div>
+
         <!-- Seleccionar Múltiples Paradas -->
         <div class="d-flex justify-content-center">
-            <div class="form-group w-75">
+            <div class="form-group">
                 <label for="stops">Seleccionar paradas</label>
                 <div class="form-check">
                     {% for stop in stops %}
-                    <input type="checkbox" class="form-check-input" id="stop_{{ stop.stop_id }}" name="stop_ids" value="{{ stop.stop_id }}">
+                    <input type="checkbox" class="form-check-input stop-checkbox" id="stop_{{ stop.stop_id }}" name="stop_ids" value="{{ stop.stop_id }}">
                     <label class="form-check-label" for="stop_{{ stop.stop_id }}">{{ stop.stop_name }}</label><br>
                     {% endfor %}
                 </div>
             </div>
         </div>
 
-        <!-- Horarios de Llegada y Salida -->
-        <div class="d-flex justify-content-center">
-            <div class="form-row">
-                <div class="form-group col">
-                    <label for="arrival_time">Hora de llegada</label>
-                    <input type="time" class="form-control" id="arrival_time" name="arrival_time" value="06:00" required>
-                </div>
-                <div class="form-group col">
-                    <label for="departure_time">Hora de salida</label>
-                    <input type="time" class="form-control" id="departure_time" name="departure_time" value="06:00" required>
-                </div>
-            </div>
-        </div>
+        <!-- Preview of Selected Stops and Times -->
+        <div id="stops-preview" class="mt-3"></div>
 
-        <button type="submit" class="btn btn-primary">Cargar recorrido</button>
+        <button type="submit" class="btn btn-primary mt-4">Cargar recorrido</button>
     </form>
 
     <!-- Lista de Stop Times -->
@@ -77,7 +76,7 @@
                 <td>
                     {% for stop in stops %}
                         {% if stop.stop_id == stop_time.stop_id %}
-                            {{ stop.stop_name }}  <!-- Use stop_name from stops table -->
+                            {{ stop.stop_name }}
                         {% endif %}
                     {% endfor %}
                 </td>
@@ -89,4 +88,70 @@
         </tbody>
     </table>
 </div>
+
+<script>
+// JavaScript to handle live preview and individual stop times
+document.querySelectorAll('.stop-checkbox').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+        const previewDiv = document.getElementById('stops-preview');
+        previewDiv.innerHTML = ''; // Clear previous preview
+
+        // Collect all selected stops
+        document.querySelectorAll('.stop-checkbox:checked').forEach(function(checkedBox, index) {
+            const stopId = checkedBox.value;
+            const stopLabel = checkedBox.nextElementSibling.innerText;
+
+            // Add the stop with individual time inputs and drag handle
+            const stopRow = `
+                <div class="d-flex align-items-center draggable-item flex-row">
+                    <span class="drag-handle mr-3" title="Arrastra para reordenar">☰</span>
+                    <div class="form-group col-md-4">
+                        <label>${stopLabel}</label>
+                        <input type="hidden" name="stop_ids[]" value="${stopId}">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="arrival_time_${stopId}">Hora de llegada</label>
+                        <input type="time" class="form-control" id="arrival_time_${stopId}" name="arrival_times[]" value="06:00" required>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="departure_time_${stopId}">Hora de salida</label>
+                        <input type="time" class="form-control" id="departure_time_${stopId}" name="departure_times[]" value="06:00" required>
+                    </div>
+                </div>`;
+            previewDiv.innerHTML += stopRow;
+        });
+    });
+});
+
+// Initialize Sortable for the stops preview
+const previewDiv = document.getElementById('stops-preview');
+new Sortable(previewDiv, {
+    handle: '.drag-handle', // Only allow dragging by the handle
+    animation: 150,
+    onEnd: function(evt) {
+        console.log(`Moved item from index ${evt.oldIndex} to ${evt.newIndex}`);
+    }
+});
+</script>
+
+<style>
+.draggable-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 5px;
+    background-color: #f9f9f9;
+    cursor: grab;
+}
+
+.drag-handle {
+    cursor: grab;
+    font-size: 1.5rem;
+    color: #888;
+}
+
+.drag-handle:hover {
+    color: #000;
+}
+</style>
+
 {% endblock %}

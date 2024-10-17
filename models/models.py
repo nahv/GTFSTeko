@@ -38,16 +38,14 @@ class Trip(db.Model):
     route_id = db.Column(db.Integer, db.ForeignKey('route.route_id'), nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey('calendar.service_id'), nullable=False)
     trip_headsign = db.Column(db.String(100))
+    direction_id = db.Column(db.Integer)  # 0 for one direction, 1 for the opposite
+
 
 class StopTime(db.Model):
     trip_id = db.Column(db.Integer, db.ForeignKey('trip.trip_id'), primary_key=True)
-    stop_id = db.Column(db.Integer, db.ForeignKey('stop.stop_id'), primary_key=True)
+    stop_id = db.Column(db.Integer, db.ForeignKey('stop.stop_id'))
     arrival_time = db.Column(db.String(8), nullable=False)
     departure_time = db.Column(db.String(8), nullable=False)
-    stop_sequence = db.Column(db.Integer, nullable=False)
-
-class Shape(db.Model):
-    shape_id = db.Column(db.Integer, primary_key=True)
-    shape_pt_lat = db.Column(db.Float, nullable=False)
-    shape_pt_lon = db.Column(db.Float, nullable=False)
-    shape_pt_sequence = db.Column(db.Integer, nullable=False)
+    stop_sequence = db.Column(db.Integer, nullable=False, primary_key=True)
+    stop_lat = db.Column(db.Float, nullable=False)
+    stop_lon = db.Column(db.Float, nullable=False)
