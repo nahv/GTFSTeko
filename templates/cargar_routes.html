@@ -67,7 +67,11 @@
             <small class="form-text text-muted">Usar formato hexadecimal (ej: #FF5733)</small>
         </div>
     </div>
-        <button type="submit" class="btn btn-primary">Cargar</button>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col"></div>
+        <button type="submit" class="btn btn-primary col">Cargar</button>
+    </div>
     </form>
 
     <!-- Routes Table -->
@@ -95,7 +99,7 @@
                     <td>{{ route.route_color }}</td>
                     <td>
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal{{ route.route_id }}">
+                        <button type="button" class="btn btn-warning btn-sm ml-2" data-toggle="modal" data-target="#editModal{{ route.route_id }}">
                             Editar
                         </button>
                         <form method="POST" action="{{ url_for('route.delete_route', route_id=route.route_id) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta ruta?');">

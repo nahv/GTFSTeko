@@ -51,9 +51,12 @@
             </table>
         </div>
 
+
+        <hr class="styled-divider my-5">
+
         <div class="form-group mt-4">
           <div class="d-flex justify-content-center">
-            <label for="recorridos" class="mt-2 mr-2">Seleccione o arrastre el archivo de Recorridos:</label>
+            <label for="recorridos" class="mt-2 mr-2">Seleccione o arrastre el archivo de recorridos:</label>
             <input type="file" class="form-control w-50" id="recorridos" name="recorridos" accept=".csv">
         </div>
         <!-- explicación recorridos -->
@@ -85,9 +88,22 @@
                 </tbody>
             </table>
         </div>
-        <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
-        <button type="submit" class="btn btn-primary">Importar y cargar a DB</button>
-
-    
+        <div class="row">
+            <div class="col"></div>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary col">Cancelar</a>
+        <button type="submit" class="btn btn-primary col">Importar y cargar a DB</button>
+        </div>
+    </form>
 </div>
+
+
+<style>
+    .styled-divider {
+        border: 0;
+        height: 1px;
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+</style>
 {% endblock %}

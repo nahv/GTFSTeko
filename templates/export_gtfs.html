@@ -14,12 +14,10 @@
       {% endif %}
     {% endwith %}
 
-    <form method="POST" class="mt-4">
-        <button type="submit" class="btn btn-primary">Exportar GTFS</button>
-    </form>
+   
 
-    <!-- Statistics Table -->
-    <h3 class="mt-5">Estadísticas de la Base de Datos</h3>
+    <!-- Tabla de estadística -->
+    <h3 class="mt-5">Estadísticas</h3>
     <table class="table table-striped mt-3">
         <thead>
             <tr>
@@ -33,7 +31,7 @@
                 <td>{{ agencies_count }}</td>
             </tr>
             <tr>
-                <td>Rutas</td>
+                <td>Líneas</td>
                 <td>{{ routes_count }}</td>
             </tr>
             <tr>
@@ -45,14 +43,22 @@
                 <td>{{ calendars_count }}</td>
             </tr>
             <tr>
-                <td>Viajes</td>
+                <td>Recorridos</td>
                 <td>{{ trips_count }}</td>
             </tr>
             <tr>
-                <td>Horarios de Paradas</td>
+                <td>Conexiones de paradas</td>
                 <td>{{ stop_times_count }}</td>
             </tr>
         </tbody>
     </table>
+    <form method="POST" class="mt-4">
+        <div class="row">
+         <div class="col"></div>   
+         <div class="col"></div>  
+        <button type="submit" class="btn btn-primary col">Exportar GTFS</button>
+        </div>
+    </form>
 </div>
+
 {% endblock %}

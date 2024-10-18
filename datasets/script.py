@@ -1,3 +1,7 @@
+# Este es el script para el tratamiento de los csv
+# Es para referencia
+# En particular este archivo no se usa en la app, la funciones se implementan en export_gtfs_routes.py
+
 import pandas as pd
 import sqlite3
 import json
@@ -7,11 +11,11 @@ paradas_csv = 'paradas.csv'
 recorridos_csv = 'recorridos.csv'
 db_path = '../instance/transporte.db'
 
-# Helper redondear coordenadas a 2 decimales
+# Helper para redondear coordenadas a 2 decimales
 def round_coords(coords):
     return [[round(coord[0], 2), round(coord[1], 2)] for coord in coords]
 
-# Function to insert data into 'stops' table
+# Función para insertar data en 'stops' table
 def load_paradas_to_stops(paradas_df, cursor):
     for _, row in paradas_df.iterrows():
         stop_name = row['linea_ramal']
@@ -25,7 +29,7 @@ def load_paradas_to_stops(paradas_df, cursor):
         '''
         cursor.execute(query, (stop_name, stop_lat, stop_lon, stop_desc))
 
-# Function to insert data into 'routes' and 'trips' and update 'stop_time'
+# Función para insertar data en 'routes' and 'trips' y update 'stop_time'
 def load_recorridos_to_routes_trips(recorridos_df, cursor):
     unique_ramal = recorridos_df['ramal'].unique()
 
@@ -45,7 +49,7 @@ def load_recorridos_to_routes_trips(recorridos_df, cursor):
                 route_long_name = descripcion.strip()
                 direction = ''
 
-            # Determine direction_id
+            # Determina direction_id
             if direction.lower() == "outbound":
                 direction_id = 0
             elif direction.lower() == "inbound":
@@ -80,7 +84,7 @@ def load_recorridos_to_routes_trips(recorridos_df, cursor):
 
             if not geojson_str:
                 print(f"GeoJSON vacío para el ramal {ramal}...")
-                continue  # Skip rows with empty GeoJSON
+                continue  # Skip columna sin GeoJSON
 
             try:
                 geojson_data = json.loads(geojson_str)
@@ -91,7 +95,7 @@ def load_recorridos_to_routes_trips(recorridos_df, cursor):
 
             # arrival_time and departure_time por defecto a '06:00:00'
             for stop_sequence, coord in enumerate(rounded_coords, start=1):
-                stop_lat, stop_lon = coord  # Extract lat/lon from GeoJSON coordinates
+                stop_lat, stop_lon = coord  # Extraer lat/lon from GeoJSON coordinates
                 query_stop_time = '''
                 INSERT INTO stop_time (trip_id, stop_id, arrival_time, departure_time, stop_sequence, stop_lat, stop_lon)
                 VALUES (?, NULL, ?, ?, ?, ?, ?)
@@ -99,20 +103,20 @@ def load_recorridos_to_routes_trips(recorridos_df, cursor):
                 cursor.execute(query_stop_time, (trip_id, '06:00:00', '06:00:00', stop_sequence, stop_lat, stop_lon))
 
 
-# Load CSV files
+# Cargar archivos CSV
 paradas_df = pd.read_csv(paradas_csv)
 recorridos_df = pd.read_csv(recorridos_csv)
 
-# Connect to the SQLite database
+# Conexión SQLite database
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-# Load data into the database
+# Cargar datos a la DB
 load_paradas_to_stops(paradas_df, cursor)
 load_recorridos_to_routes_trips(recorridos_df, cursor)
 
-# Commit and close the connection
+# Commit y cerrar connexión
 conn.commit()
 conn.close()
 
-print("Data loaded successfully.")
+print("Se cargaron datos exitosamente.")

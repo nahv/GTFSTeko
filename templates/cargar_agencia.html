@@ -14,6 +14,7 @@
       {% endif %}
     {% endwith %}
 
+
     <form method="POST" class="mt-4">
         <div class="form-group">
             <label for="agency_name">Nombre</label>
@@ -28,7 +29,11 @@
             <input type="text" class="form-control" id="agency_timezone" name="agency_timezone" value="UTC-3" readonly>
             <small class="form-text text-muted">(Argentina)</small>
         </div>
-        <button type="submit" class="btn btn-primary">Cargar Agencia</button>
+        <div class="row">
+            <div class="col"></div>
+            <div class="col"></div>
+        <button type="submit" class="btn btn-primary col">Cargar Agencia</button>
+        </div>
     </form>
 
     <!-- Agencies Table -->
@@ -51,7 +56,7 @@
                     <td>{{ agency.agency_url }}</td>
                     <td>{{ agency.agency_timezone }}</td>
                     <td>
-                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal{{ agency.agency_id }}">Editar</button>
+                        <button type="button" class="btn btn-warning btn-sm ml-2" data-toggle="modal" data-target="#editModal{{ agency.agency_id }}">Editar</button>
                         <form method="POST" action="{{ url_for('agency.delete_agency', agency_id=agency.agency_id) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta agencia?');" style="display:inline;">
                             <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                         </form>

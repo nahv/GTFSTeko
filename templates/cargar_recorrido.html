@@ -18,19 +18,19 @@
 
     <!-- Cargar Stop Times Form -->
     <form method="POST" action="{{ url_for('gtfs.cargar_recorrido') }}" class="mt-4">
-        <!-- Seleccionar Ruta -->
+        <!-- Seleccionar línea -->
         <div class="d-flex justify-content-center">
             <div class="form-group">
                 <label for="route_id">Seleccionar línea</label>
                 <select class="form-control form-control-sm" id="route_id" name="route_id" required>
                     {% for route in routes %}
-                    <option value="{{ route.route_id }}">{{ route.route_long_name }}</option>
+                    <option value="{{ route.route_id }}">{{ route.route_short_name + ' ' + route.route_long_name }}</option>
                     {% endfor %}
                 </select>
             </div>
         </div>
 
-        <!-- Input for trip headsign -->
+        <!-- Input para trip headsign -->
         <div class="d-flex justify-content-center">
             <div class="form-group">
                 <label for="trip_headsign">Dirección del viaje (opcional)</label>
@@ -42,122 +42,150 @@
         <div class="d-flex justify-content-center">
             <div class="form-group">
                 <label for="stops">Seleccionar paradas</label>
-                <div class="form-check">
-                    {% for stop in stops.items %}
-                    <input type="checkbox" class="form-check-input stop-checkbox" id="stop_{{ stop.stop_id }}" name="stop_ids" value="{{ stop.stop_id }}">
-                    <label class="form-check-label" for="stop_{{ stop.stop_id }}">{{ stop.stop_name }}</label><br>
-                    {% endfor %}
-                </div>
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Seleccionar</th>
+                            <th>Parada</th>
+                            <th>Latitud</th>
+                            <th>Longitud</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stop in stops.items %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="form-check-input stop-checkbox ml-4 mt-1" id="stop_{{ stop.stop_id }}" name="stop_ids" value="{{ stop.stop_id }}" style="transform: scale(1.5); margin: 0;">
+                            </td>
+                            <td>
+                                <label class="form-check-label" for="stop_{{ stop.stop_id }}">{{ stop.stop_name }}</label>
+                            </td>
+                            <td>{{ stop.stop_lat }}</td>
+                            <td>{{ stop.stop_lon }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
 
         <!-- Pagination for Stops -->
-<nav aria-label="Page navigation">
-    <ul class="pagination justify-content-center">
-        {% if stops.has_prev %}
-        <li class="page-item">
-            <a class="page-link" href="{{ url_for('gtfs.cargar_recorrido', page=stops.prev_num) }}" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        {% endif %}
-        {% for page_num in stops.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
-            {% if page_num %}
-                <li class="page-item {% if page_num == stops.page %}active{% endif %}">
-                    <a class="page-link" href="{{ url_for('gtfs.cargar_recorrido', page=page_num) }}">{{ page_num }}</a>
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if stops.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('gtfs.cargar_recorrido', page=stops.prev_num) }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
                 </li>
-            {% else %}
-                <li class="page-item disabled"><span class="page-link">…</span></li>
-            {% endif %}
-        {% endfor %}
-        {% if stops.has_next %}
-        <li class="page-item">
-            <a class="page-link" href="{{ url_for('gtfs.cargar_recorrido', page=stops.next_num) }}" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-        {% endif %}
-    </ul>
-</nav>
+                {% endif %}
+                {% for page_num in stops.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                    <li class="page-item {% if page_num == stops.page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('gtfs.cargar_recorrido', page=page_num) }}">{{ page_num }}</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                    {% endif %}
+                {% endfor %}
+                {% if stops.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('gtfs.cargar_recorrido', page=stops.next_num) }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
 
-
-        <!-- Preview of Selected Stops and Times -->
+        <!-- Preview for Selected Stops and Times -->
         <div id="stops-preview" class="mt-3"></div>
 
-        <button type="submit" class="btn btn-primary mt-4">Cargar recorrido</button>
+        <!-- Label for dragging placed above the preview boxes -->
+        <div id="reorder-label" class="text-center mt-2" style="display: none;">
+            Arrastrar para reordenar
+        </div>
+
+        <div class="row">
+            <div class="col"></div>
+            <div class="col">
+                <button type="submit" class="btn btn-primary mt-4 col">Cargar recorrido</button>
+            </div>
+        </div>
     </form>
 
-    <!-- Lista de Stop Times -->
-    <h3 class="mt-5">Lista de paradas conectadas cargadas</h3>
-<table class="table table-bordered mt-3">
-    <thead>
-        <tr>
-            <th>Parada</th>
-            <th>Hora de Llegada</th>
-            <th>Hora de Salida</th>
-            <th>Secuencia de Parada</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for stop_time in stop_times.items %}
-        <tr>
-            <td>
-                {{ stop_names[stop_time.stop_id] if stop_time.stop_id in stop_names else ' ' }}
-            </td>
-            <td>{{ stop_time.arrival_time }}</td>
-            <td>{{ stop_time.departure_time }}</td>
-            <td>{{ stop_time.stop_sequence }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <!-- Lista de Stop Times (paradas conectadas) -->
+    <h3 class="mt-5">Lista de paradas conectadas</h3>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Parada</th>
+                <th>Hora de Llegada</th>
+                <th>Hora de Salida</th>
+                <th>Secuencia de Parada</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stop_time in stop_times %}
+            <tr>
+                <td>{{ stop_dict[stop_time.stop_id] }}</td>
+                <td>{{ stop_time.arrival_time }}</td>
+                <td>{{ stop_time.departure_time }}</td>
+                <td>{{ stop_time.stop_sequence }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-
-   <!-- Pagination for Stop Times -->
-<nav aria-label="Page navigation">
-    <ul class="pagination justify-content-center">
-        {% if stop_times.has_prev %}
-        <li class="page-item">
-            <a class="page-link" href="{{ url_for('gtfs.cargar_recorrido', stop_times_page=stop_times.prev_num) }}" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        {% endif %}
-        {% for page_num in stop_times.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
-            {% if page_num %}
+    <!-- Pagination for Stop Times -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if stop_times.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('gtfs.cargar_recorrido', stop_times_page=stop_times.prev_num) }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% endif %}
+            {% for page_num in stop_times.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                {% if page_num %}
                 <li class="page-item {% if page_num == stop_times.page %}active{% endif %}">
                     <a class="page-link" href="{{ url_for('gtfs.cargar_recorrido', stop_times_page=page_num) }}">{{ page_num }}</a>
                 </li>
-            {% else %}
+                {% else %}
                 <li class="page-item disabled"><span class="page-link">…</span></li>
+                {% endif %}
+            {% endfor %}
+            {% if stop_times.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('gtfs.cargar_recorrido', stop_times_page=stop_times.next_num) }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
             {% endif %}
-        {% endfor %}
-        {% if stop_times.has_next %}
-        <li class="page-item">
-            <a class="page-link" href="{{ url_for('gtfs.cargar_recorrido', stop_times_page=stop_times.next_num) }}" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-        {% endif %}
-    </ul>
-</nav>
+        </ul>
+    </nav>
+</div>
+
 <script>
-// JavaScript to handle live preview and individual stop times
+// JavaScript para live preview
 document.querySelectorAll('.stop-checkbox').forEach(function(checkbox) {
     checkbox.addEventListener('change', function() {
         const previewDiv = document.getElementById('stops-preview');
+        const reorderLabel = document.getElementById('reorder-label');
         previewDiv.innerHTML = ''; // Clear previous preview
 
-        // Collect all selected stops
-        document.querySelectorAll('.stop-checkbox:checked').forEach(function(checkedBox, index) {
+        // Seleccionar todas las paradas elegidas
+        const selectedStops = document.querySelectorAll('.stop-checkbox:checked');
+        selectedStops.forEach(function(checkedBox) {
             const stopId = checkedBox.value;
-            const stopLabel = checkedBox.nextElementSibling.innerText;
+            const stopLabel = checkedBox.closest('tr').querySelector('.form-check-label').innerText;
 
-            // Add the stop with individual time inputs and drag handle
+            // Agregar la parada con tiempos a la lista reordenable
             const stopRow = `
-                <div class="d-flex align-items-center draggable-item flex-row">
-                    <span class="drag-handle mr-3" title="Arrastra para reordenar">☰</span>
-                    <div class="form-group col-md-4">
+                <div class="d-flex align-items-center draggable-item flex-row">   
+                    <span class="drag-handle" title="Arrastra para reordenar">☰</span>
+                    <div class="form-group col-md-4 mt-4">
                         <label>${stopLabel}</label>
                         <input type="hidden" name="stop_ids[]" value="${stopId}">
                     </div>
@@ -172,17 +200,20 @@ document.querySelectorAll('.stop-checkbox').forEach(function(checkbox) {
                 </div>`;
             previewDiv.innerHTML += stopRow;
         });
-    });
-});
 
-// Initialize Sortable for the stops preview
-const previewDiv = document.getElementById('stops-preview');
-new Sortable(previewDiv, {
-    handle: '.drag-handle', // Only allow dragging by the handle
-    animation: 150,
-    onEnd: function(evt) {
-        console.log(`Moved item from index ${evt.oldIndex} to ${evt.newIndex}`);
-    }
+        // Show or hide the reorder label based on selected stops
+        reorderLabel.style.display = selectedStops.length > 0 ? 'block' : 'none';
+
+        // Make the preview sortable if there are selected stops
+        if (selectedStops.length > 0) {
+            Sortable.create(previewDiv, {
+                animation: 150,
+                onEnd: function(evt) {
+                    console.log('Item moved from index ' + evt.oldIndex + ' to ' + evt.newIndex);
+                }
+            });
+        }
+    });
 });
 </script>
 

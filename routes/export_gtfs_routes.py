@@ -10,12 +10,12 @@ GTFS_FOLDER = os.path.join(os.getcwd(), 'gtfs_exports')
 @export_gtfs_bp.route('/export_gtfs', methods=['GET', 'POST'])
 def export_gtfs():
     if request.method == 'POST':
-        # Ensure the GTFS folder exists
+        # Crear carpeta GTFS
         if not os.path.exists(GTFS_FOLDER):
             os.makedirs(GTFS_FOLDER)
 
         try:
-            # Generate each GTFS file from the database
+            # Generar cada archivo GTFS
             generate_agency_txt()
             generate_routes_txt()
             generate_stops_txt()
@@ -23,17 +23,17 @@ def export_gtfs():
             generate_trips_txt()
             generate_stop_times_txt()
 
-            # Zip the GTFS files
+            # Zip
             zip_file_path = zip_gtfs_files()
 
-            # Provide the zip file for download
+            # Enviar al frontend para descargar
             return send_file(zip_file_path, as_attachment=True)
 
         except Exception as e:
-            flash(f"Error exporting GTFS: {e}", 'danger')
+            flash(f"Error al exportar GTFS: {e}", 'danger')
             return redirect(url_for('export_gtfs_bp.export_gtfs'))
 
-    # On GET request, calculate statistics
+    # Calcuar estadísticas
     agencies_count = Agency.query.count()
     routes_count = Route.query.count()
     stops_count = Stop.query.count()
@@ -51,7 +51,7 @@ def export_gtfs():
                            agencies=Agency.query.all())
 
 
-# Helper function to zip all the GTFS files
+# Función para zipear todos los archivos
 def zip_gtfs_files():
     zip_path = os.path.join(GTFS_FOLDER, 'gtfs.zip')
     with zipfile.ZipFile(zip_path, 'w') as zipf:
@@ -61,7 +61,7 @@ def zip_gtfs_files():
     return zip_path
 
 
-# Functions to generate each TXT file
+# Funciones para generar cada txt
 def generate_agency_txt():
     agency_file = os.path.join(GTFS_FOLDER, 'agency.txt')
     agencies = Agency.query.all()
@@ -120,5 +120,3 @@ def generate_stop_times_txt():
         f.write('trip_id,stop_id,arrival_time,departure_time,stop_sequence,stop_lat,stop_lon\n')
         for stop_time in stop_times:
             f.write(f'{stop_time.trip_id},{stop_time.stop_id},{stop_time.arrival_time},{stop_time.departure_time},{stop_time.stop_sequence},{stop_time.stop_lat},{stop_time.stop_lon}\n')
-
-
