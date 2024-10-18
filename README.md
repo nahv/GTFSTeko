@@ -5,7 +5,7 @@ Esto es un proyecto de aprendizaje en el marco del Dathaton 2024 de la Cumbre de
 GTFSTekó es una herramienta para producir, mantener y exportar datos sobre el transporte público de la ciudad de Corrientes al formato GTFS (General Transit Feed Specification). <br>
 Los datos se integran en una db sqlite para luego exportarlos en el estandar global.
 
-## Objetivo 🎯
+## Objetivo
 
 Generar y mantener actualizados datos de transporte público para que puedan ser utilizados en servicios como Google Maps o Apple Maps.
 
@@ -40,14 +40,13 @@ cd GTFSTeko
 ```
 3. **Asegurate de tener Python3 con las siguientes dependencias**:
 ```
-pip install Flask pandas flask-paginatem SQLAlchemy Flask-SQLAlchemy
+pip install Flask pandas flask-paginate SQLAlchemy Flask-SQLAlchemy
 ```
-4. **Iniciala con:**
+4. **Iniciar con:**
 ```
 python3 app.py
 ```
-5. **Abrir en el servidor local <http://127.0.0.1:5001/> <br>Por defecto corre en el puerto 5001; de ser necesario ajustar en app.py**
-
+5. **Abrir en el servidor local <http://127.0.0.1:5001/><br><br>Por defecto corre en el puerto 5001; de ser necesario ajustar en app.py**
 
 ## Contribuciones 🤝
 
