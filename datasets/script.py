@@ -1,6 +1,6 @@
-# Este es el script para el tratamiento de los csv
-# Es para referencia
-# En particular este archivo no se usa en la app, la funciones se implementan en export_gtfs_routes.py
+# Script para el tratamiento de los csv
+# Este archivo es únicamente de referencia
+# Ya no se usa en la app, la funciones de acá se implementan en routes/export_gtfs_routes.py
 
 import pandas as pd
 import sqlite3

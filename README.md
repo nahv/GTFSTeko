@@ -32,7 +32,7 @@ GTFSTeko/ <br>
 
 1. **Cloná el repositorio**:
 ```
-   git clone <https://github.com/nahv/GTFSTeko>
+   git clone https://github.com/nahv/GTFSTeko
 ```
 2. **Navegá a la carpeta del proyecto**:
 ```
