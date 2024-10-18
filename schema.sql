@@ -1,3 +1,5 @@
+-- Este archivo es sólo de referencia para el schema. 
+-- Para la base de datos de la aplicación se usa models/models.py
 
 CREATE TABLE agency (
     agency_id INTEGER PRIMARY KEY AUTOINCREMENT,

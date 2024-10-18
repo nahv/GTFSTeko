@@ -34,7 +34,7 @@ GTFSTeko/ <br>
 ```
    git clone <https://github.com/nahv/GTFSTeko>
 ```
-2. **Navega a la carpeta del proyecto**:
+2. **Navegá a la carpeta del proyecto**:
 ```
 cd GTFSTeko
 ```
@@ -46,7 +46,7 @@ pip install Flask pandas flask-paginate SQLAlchemy Flask-SQLAlchemy
 ```
 python3 app.py
 ```
-5. **Abrir en el servidor local <http://127.0.0.1:5001/><br><br>Por defecto corre en el puerto 5001; de ser necesario ajustar en app.py**
+5. **Abrir en tu servidor local <http://127.0.0.1:5001/><br><br>Por defecto corre en el puerto 5001; de ser necesario ajustar en app.py**
 
 ## Contribuciones 🤝
 
