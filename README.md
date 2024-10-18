@@ -40,7 +40,7 @@ cd GTFSTeko
 ```
 3. **Asegurate de tener Python3 con las siguientes dependencias**:
 ```
-pip install Flask pandas flask-paginate
+pip install Flask pandas flask-paginatem SQLAlchemy Flask-SQLAlchemy
 ```
 4. **Iniciala con:**
 ```
