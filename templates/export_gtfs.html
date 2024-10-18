@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 w-50">
+    <h2 class="text-center">Exportar GTFS</h2>
+
+    <!-- Mensaje exitoso -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        <div class="alert alert-success" role="alert">
+          {% for category, message in messages %}
+            {{ message }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="mt-4">
+        <button type="submit" class="btn btn-primary">Exportar GTFS</button>
+    </form>
+
+    <!-- Statistics Table -->
+    <h3 class="mt-5">Estadísticas de la Base de Datos</h3>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Tipo</th>
+                <th>Conteo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Agencias</td>
+                <td>{{ agencies_count }}</td>
+            </tr>
+            <tr>
+                <td>Rutas</td>
+                <td>{{ routes_count }}</td>
+            </tr>
+            <tr>
+                <td>Paradas</td>
+                <td>{{ stops_count }}</td>
+            </tr>
+            <tr>
+                <td>Calendarios</td>
+                <td>{{ calendars_count }}</td>
+            </tr>
+            <tr>
+                <td>Viajes</td>
+                <td>{{ trips_count }}</td>
+            </tr>
+            <tr>
+                <td>Horarios de Paradas</td>
+                <td>{{ stop_times_count }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
