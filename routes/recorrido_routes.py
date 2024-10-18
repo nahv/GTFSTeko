@@ -65,7 +65,11 @@ def cargar_recorrido():
 
     routes = Route.query.all()
 
+    # Stops dictionary
+    stops = {stop.stop_id: stop.stop_name for stop in Stop.query.all()}
+
     return render_template('cargar_recorrido.html', 
                            routes=routes, 
                            stops=stops_pagination,  
-                           stop_times=stop_times_pagination)
+                           stop_times=stop_times_pagination,
+                           stop_names=stops)

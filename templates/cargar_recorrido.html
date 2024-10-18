@@ -102,11 +102,7 @@
         {% for stop_time in stop_times.items %}
         <tr>
             <td>
-                {% for stop in stops %}
-                    {% if stop.stop_id == stop_time.stop_id %}
-                        {{ stop.stop_name }}
-                    {% endif %}
-                {% endfor %}
+                {{ stop_names[stop_time.stop_id] if stop_time.stop_id in stop_names else ' ' }}
             </td>
             <td>{{ stop_time.arrival_time }}</td>
             <td>{{ stop_time.departure_time }}</td>
