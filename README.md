@@ -17,15 +17,14 @@ Generar y mantener actualizados datos de transporte público que puedan ser util
 ## Estructura del Proyecto 📁
 
 GTFSTeko/
---------/routes         # rutas
---------/templates      # templates
---------/models         # modelos de AlchemySQL (schema)
---------/instance       # Acá va la base de datos "transporte.db", 
-                           database.py la crea si no existe.
---------/app.py         # Corre la app
---------/database.py    # lógica para inicializar la db
---------/datasets       # Acá se guardan los csv que se suben para procesar
---------/gtfs_exports   # Acá se guardan los GTFS una vez procesados para descargar
+├── routes/             # rutas
+├── templates/          # templates
+├── models/             # modelos de AlchemySQL (schema)
+├── instance/           # Acá va la base de datos "transporte.db", database.py la crea si no existe
+├── app.py              # Corre la app
+├── database.py         # lógica para inicializar la db
+├── datasets/           # Acá se guardan los csv que se suben para procesar
+└── gtfs_exports/       # Acá se guardan los GTFS una vez procesados para descargar
 
 ## Probar 🚀
 
