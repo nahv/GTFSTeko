@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from models.models import Stop  # Make sure to import your Stop model
+from models.models import Stop
 from database import db
 from flask_paginate import Pagination, get_page_parameter
 

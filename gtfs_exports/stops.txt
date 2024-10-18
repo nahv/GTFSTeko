@@ -1,3 +1,0 @@
-stop_id,stop_name,stop_lat,stop_lon,stop_desc
-1,Parada test,1.0,1.0,
-2,Parada test 2,2.0,2.0,
