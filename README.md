@@ -2,7 +2,7 @@
 
 Esto es un proyecto de aprendizaje en el marco del Dathaton 2024 de la Cumbre de Datos <https://www.cumbrededatos.ar/>.
 
-GTFSTekó es una herramienta para producir, mantener y exportar datos sobre el transporte público de la ciudad de Corrientes al formato GTFS (General Transit Feed Specification). <br>
+Herramienta para producir, mantener y exportar datos sobre el transporte público de la ciudad de Corrientes al formato GTFS (General Transit Feed Specification). <br>
 Los datos se integran en una db sqlite para luego exportarlos en el estandar global.
 
 ## Objetivo
@@ -51,3 +51,9 @@ python3 app.py
 ## Contribuciones 🤝
 
 Las contribuciones son bienvenidas.
+
+## Recursos 🌐 🔍
+
+<https://gtfs.org/getting_started/what_is_GTFS/>
+
+<https://gtfs.org/documentation/overview/>
